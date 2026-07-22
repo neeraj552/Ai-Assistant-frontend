@@ -4,6 +4,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Register from "./pages/Register";
 
 function App(){
   return(
@@ -11,7 +12,8 @@ function App(){
      <Routes>
           
           {/*Public Routes*/}
-          <Route path ="/login" element = {<Login/>} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
           {/*Protected Routes*/}
           <Route
              path="/dashboard"
