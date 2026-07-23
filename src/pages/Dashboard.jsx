@@ -1,5 +1,12 @@
+import ChatWindow
+ from "../components/chat/ChatWindow";
 function Dashboard(){
-    return <h1 className="bg-black">Dashboard Page</h1>
+    return(
+         <div className="min-h-screen bg-gray-100">
+            <ChatWindow/>
+         </div>
+
+    );
 }
 
 export default Dashboard;
