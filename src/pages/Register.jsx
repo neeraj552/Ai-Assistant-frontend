@@ -60,10 +60,10 @@ function Register(){
                     />
                 </div>
 
-                <Button
-                    text="Register"
-                    onClick={handleRegister}
-                />
+                <Button  onClick={handleRegister}
+                >
+                    Register
+                </Button>
             </div>
         </div>
     );

@@ -25,9 +25,11 @@ function ChatInput({ onSend }) {
             />
 
             <Button
-                text="Send"
-                onClick={handleSend}
-            />
+            variant="secondary" 
+            onClick={handleSend} 
+            >
+                Send
+            </Button>
 
         </div>
     );

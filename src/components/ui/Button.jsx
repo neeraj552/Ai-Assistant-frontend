@@ -1,11 +1,11 @@
 function Button({
-  text,
+  children,
   onClick,
   type = "button",
   variant = "primary",
+  className = "",
 }) {
-  const baseStyle =
-    "px-6 py-3 rounded-lg font-medium transition";
+  const baseStyle = "px-6 py-3 rounded-lg font-medium transition";
 
   const variants = {
     primary: "bg-blue-600 hover:bg-blue-700 text-white",
@@ -17,9 +17,9 @@ function Button({
     <button
       type={type}
       onClick={onClick}
-      className={`${baseStyle} ${variants[variant]}`}
+      className={`${baseStyle} ${variants[variant]} ${className}`}
     >
-      {text}
+      {children}
     </button>
   );
 }

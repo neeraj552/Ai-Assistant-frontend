@@ -53,10 +53,9 @@ function Login() {
                     />
                 </div>
 
-                <Button
-                    text="Login"
-                    onClick={handleLogin}
-                />
+                <Button onClick={handleLogin}>
+                Login
+                </Button>
             </div>
         </div>
     );
