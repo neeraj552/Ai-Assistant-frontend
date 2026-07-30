@@ -1,66 +1,130 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import MessageBubble from "./MessageBubble";
-import FileSelector from "../files/FileSelector";
-import FileModal from "../files/FileModal";
+
+import {
+    getChatHistory,
+    askQuestion
+} from "../../services/chatService";
 
 function ChatWindow() {
 
-    const [messages, setMessages] = useState([
-        {
-            sender: "assistant",
-            message: "Hello! How can I help you today?"
-        },
-        {
-            sender: "user",
-            message: "Explain Spring Boot."
-        }
-    ]);
+    const { fileId } = useParams();
 
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    function handleSendMessage(message) {
-        setMessages((previousMessages) => [
-            ...previousMessages,
-            {
-                sender: "user",
-                message
+    useEffect(() => {
+
+        async function loadHistory() {
+
+            try {
+
+                setLoading(true);
+
+                const history = await getChatHistory(fileId);
+
+                setMessages(history);
+
+            } catch (error) {
+
+                console.error("Failed to load chat history:", error);
+
+            } finally {
+
+                setLoading(false);
+
             }
-        ]);
+
+        }
+
+        if (fileId) {
+            loadHistory();
+        }
+
+    }, [fileId]);
+
+    async function handleSendMessage(question) {
+
+    const tempId = `temp-${Date.now()}`;
+
+    const tempChat = {
+        id: tempId,
+        question,
+        answer: "",
+        isPending: true
+    };
+
+    // Show question + thinking bubble immediately
+    setMessages(prev => [...prev, tempChat]);
+
+    try {
+
+        const response = await askQuestion(fileId, question);
+
+        // Replace the temporary message with the real response
+        setMessages(prev =>
+            prev.map(chat =>
+                chat.id === tempId ? response : chat
+            )
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        // Remove temporary message on error
+        setMessages(prev =>
+            prev.filter(chat => chat.id !== tempId)
+        );
+
     }
+}
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen bg-gray-100">
 
-            <FileSelector
-                selectedFile={selectedFile}
-                onChangeDocument={() => setIsModalOpen(true)}
-            />
+            <ChatHeader />
 
-            {isModalOpen && (
-                <FileModal
-                    onClose={() => setIsModalOpen(false)}
-                    selectedFile={selectedFile}
-                    setSelectedFile={setSelectedFile}
-                />
-            )}
+            <main className="flex-1 overflow-y-auto">
 
-            <div className="flex-1 overflow-y-auto p-6">
+                <div className="max-w-4xl mx-auto px-6 py-8">
 
-                {messages.map((msg, index) => (
-                    <MessageBubble
-                        key={index}
-                        sender={msg.sender}
-                        message={msg.message}
+                    {messages.map((chat) => (
+                        <div key={chat.id}>
+
+                            <MessageBubble
+                                sender="user"
+                                message={chat.question}
+                            />
+
+                            <MessageBubble
+                                sender="assistant"
+                                message={chat.answer}
+                            />
+
+                        </div>
+                    ))}
+
+                </div>
+
+            </main>
+
+            <footer className="border-t bg-white">
+
+                <div className="max-w-4xl mx-auto p-5">
+
+                    <ChatInput
+                        onSend={handleSendMessage}
+                        disabled={loading}
                     />
-                ))}
 
-            </div>
+                </div>
 
-            <div className="border-t p-4">
-                <ChatInput onSend={handleSendMessage} />
-            </div>
+            </footer>
 
         </div>
     );

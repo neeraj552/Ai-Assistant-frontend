@@ -1,11 +1,10 @@
-import ChatWindow
- from "../components/chat/ChatWindow";
-function Dashboard(){
-    return(
-         <div className="min-h-screen bg-gray-100">
-            <ChatWindow/>
-         </div>
+import DocumentManager from "../components/dashboard/DocumentManager";
 
+function Dashboard() {
+    return (
+        <div className="p-8">
+            <DocumentManager />
+        </div>
     );
 }
 

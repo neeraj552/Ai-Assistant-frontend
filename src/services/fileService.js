@@ -16,12 +16,12 @@ export const getFiles = async () => {
     return response.data;
 };
 
-export const deletFile = async (id) => {
+export const deleteFile = async (id) => {
     return api.delete(`/files/${id}`);
 };
 
 export const downloadFile = async (id) => {
-    return api.get(`/files/${id}/download`, {
+    return api.get(`/files/download/${id}`, {
         responseType: "blob",
     });
 };
