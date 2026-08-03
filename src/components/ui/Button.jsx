@@ -1,26 +1,65 @@
+import { motion } from "framer-motion";
+
 function Button({
   children,
   onClick,
   type = "button",
   variant = "primary",
+  disabled = false,
   className = "",
 }) {
-  const baseStyle = "px-6 py-3 rounded-lg font-medium transition";
+
+  const baseStyle = `
+    inline-flex
+    items-center
+    justify-center
+    rounded-xl
+    px-6
+    py-3.5
+    font-semibold
+    transition-all
+    duration-300
+    disabled:opacity-50
+    disabled:cursor-not-allowed
+  `;
 
   const variants = {
-    primary: "bg-blue-600 hover:bg-blue-700 text-white",
-    secondary: "bg-gray-200 hover:bg-gray-300 text-black",
-    danger: "bg-red-600 hover:bg-red-700 text-white",
+    primary: `
+      bg-gradient-to-r
+      from-blue-500
+      to-violet-500
+      text-white
+      hover:-translate-y-0.5
+      hover:shadow-xl
+      hover:shadow-blue-500/25
+    `,
+    secondary: `
+      bg-slate-700
+      text-white
+      hover:bg-slate-600
+    `,
+    danger: `
+      bg-red-600
+      text-white
+      hover:bg-red-700
+    `,
   };
 
   return (
-    <button
+    <motion.button
       type={type}
       onClick={onClick}
+      disabled={disabled}
+      whileHover={{
+        scale: 1.02,
+      }}
+      whileTap={{
+        scale: 0.98,
+      }}
       className={`${baseStyle} ${variants[variant]} ${className}`}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }
 

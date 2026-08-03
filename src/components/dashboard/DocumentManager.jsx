@@ -7,6 +7,7 @@ import {
     downloadFile,
     deleteFile,
 } from "../../services/fileService";
+import toast from "react-hot-toast";
 
 function DocumentManager() {
     const fileInputRef = useRef(null);
@@ -41,9 +42,8 @@ function DocumentManager() {
 
             console.log(uploadedFile);
 
-            alert("File uploaded successfully!");
+           toast.success("Uploaded successfully");
 
-            // Add new file without reloading
             await loadFiles();
 
             setSelectedFile(null);
@@ -51,7 +51,7 @@ function DocumentManager() {
 
         } catch (error) {
             console.error(error);
-            alert("Upload failed.");
+            toast.error("Upload failed!");
         } finally {
             setUploading(false);
         }

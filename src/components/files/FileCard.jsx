@@ -33,13 +33,20 @@ function FileCard ({ file, onDownload, onDelete}) {
                 </p>
           
                 <div className="flex justify-end gap-2 mt-4">
-                    <Button 
-                    variant="primary"
-                    onClick={() => navigate(`/chat/${file.id}`)}
+                    <Button
+                       variant="primary"
+                       onClick={() =>
+                       navigate(`/chat/${file.id}`, {
+                       state: {
+                       fileName: file.originalName
+                       }
+                       })
+                       }
                     >
-                      <MessageSquare size={18}/>
-                      Chat
+                    <MessageSquare size={18} />
+                    Chat
                     </Button>
+                    
                     <Button variant="secondary"
                             onClick={() => onDownload(file)}
                     >

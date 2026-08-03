@@ -2,7 +2,7 @@ import { ArrowLeft, Trash2, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
 
-function ChatHeader({ fileName = "SpringBoot.pdf" }) {
+function ChatHeader({ fileName, onDeleteChat }) {
     const navigate = useNavigate();
 
     return (
@@ -33,7 +33,10 @@ function ChatHeader({ fileName = "SpringBoot.pdf" }) {
 
             </div>
 
-            <Button variant="danger">
+            <Button 
+            variant="danger"
+            onClick={onDeleteChat}
+            >
                 <Trash2 size={18} />
                 Delete Chat
             </Button>

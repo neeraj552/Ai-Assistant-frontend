@@ -2,3 +2,46 @@
 .body{
     background:grey;
 }
+
+@keyframes blob {
+    0%{
+        transform: translate(0px, 0px) scale(1);
+    }
+
+    33%{
+        transform: translate(40px, -50px) scale(1.1);
+    }
+
+    66%{
+        transform: translate(-30px, 30px) scale(.95);
+    }
+
+    100%{
+        transform: translate(0px, 0px) scale(1);
+    }
+}
+
+.animate-bolb{
+    animation: blob 12s infinite ease-in-out;
+}
+
+.animation-delay-2000{
+    animation-delay: 2s;
+}
+
+.animation-delay-4000{
+    animation-delay: 4s;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+
+    -webkit-text-fill-color: white;
+
+    -webkit-box-shadow: 0 0 0px 1000px rgb(30 41 59) inset;
+
+    transition: background-color 9999s ease-in-out 0s;
+}

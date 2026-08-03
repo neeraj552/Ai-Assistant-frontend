@@ -1,25 +1,38 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import MessageBubble from "./MessageBubble";
+import SummaryCard from "./SummaryCard";
 
 import {
     getChatHistory,
-    askQuestion
+    askQuestion,
+    deleteChatHistory
 } from "../../services/chatService";
+
+import {
+    getSummary,
+    generateSummary
+} from "../../services/summaryService";
 
 function ChatWindow() {
 
     const { fileId } = useParams();
+    const location = useLocation();
+
+    const fileName = location.state?.fileName ?? "Unknown Document";
 
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const [summary, setSummary] = useState(null);
+    const [summaryLoading, setSummaryLoading] = useState(false);
+
     useEffect(() => {
 
-        async function loadHistory() {
+        async function loadChat() {
 
             try {
 
@@ -41,59 +54,138 @@ function ChatWindow() {
 
         }
 
+        async function loadSummary() {
+
+            try {
+
+                const response = await getSummary(fileId);
+
+                setSummary(response);
+
+            } catch (error) {
+
+                // Ignore if summary hasn't been generated yet
+                if (error.response?.status !== 404) {
+                    console.error("Failed to load summary:", error);
+                }
+
+            }
+
+        }
+
         if (fileId) {
-            loadHistory();
+
+            loadChat();
+            loadSummary();
+
         }
 
     }, [fileId]);
 
-    async function handleSendMessage(question) {
+    async function handleDeleteChat() {
 
-    const tempId = `temp-${Date.now()}`;
-
-    const tempChat = {
-        id: tempId,
-        question,
-        answer: "",
-        isPending: true
-    };
-
-    // Show question + thinking bubble immediately
-    setMessages(prev => [...prev, tempChat]);
-
-    try {
-
-        const response = await askQuestion(fileId, question);
-
-        // Replace the temporary message with the real response
-        setMessages(prev =>
-            prev.map(chat =>
-                chat.id === tempId ? response : chat
-            )
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this chat history?"
         );
 
-    } catch (error) {
+        if (!confirmed) return;
 
-        console.error(error);
+        try {
 
-        // Remove temporary message on error
-        setMessages(prev =>
-            prev.filter(chat => chat.id !== tempId)
-        );
+            await deleteChatHistory(fileId);
+
+            setMessages([]);
+
+        } catch (error) {
+
+            console.error("Failed to delete chat history:", error);
+
+            alert("Failed to delete chat history.");
+
+        }
 
     }
-}
+
+    async function handleGenerateSummary() {
+
+        try {
+
+            setSummaryLoading(true);
+
+            const response = await generateSummary(fileId);
+
+            setSummary(response);
+
+        } catch (error) {
+
+            console.error("Failed to generate summary:", error);
+
+            alert("Failed to generate summary.");
+
+        } finally {
+
+            setSummaryLoading(false);
+
+        }
+
+    }
+
+    async function handleSendMessage(question) {
+
+        const tempId = `temp-${Date.now()}`;
+
+        const tempChat = {
+            id: tempId,
+            question,
+            answer: "",
+            isPending: true
+        };
+
+        setMessages(prev => [...prev, tempChat]);
+
+        try {
+
+            const response = await askQuestion(fileId, question);
+
+            setMessages(prev =>
+                prev.map(chat =>
+                    chat.id === tempId ? response : chat
+                )
+            );
+
+        } catch (error) {
+
+            console.error("Failed to send message:", error);
+
+            setMessages(prev =>
+                prev.filter(chat => chat.id !== tempId)
+            );
+
+        }
+
+    }
 
     return (
+
         <div className="flex flex-col h-screen bg-gray-100">
 
-            <ChatHeader />
+            <ChatHeader
+                fileName={fileName}
+                onDeleteChat={handleDeleteChat}
+            />
 
             <main className="flex-1 overflow-y-auto">
 
                 <div className="max-w-4xl mx-auto px-6 py-8">
 
-                    {messages.map((chat) => (
+                    <SummaryCard
+                        summary={summary}
+                        loading={summaryLoading}
+                        onGenerate={handleGenerateSummary}
+                    />
+
+                    {messages.map(chat => (
+
                         <div key={chat.id}>
 
                             <MessageBubble
@@ -104,9 +196,11 @@ function ChatWindow() {
                             <MessageBubble
                                 sender="assistant"
                                 message={chat.answer}
+                                loading={chat.isPending}
                             />
 
                         </div>
+
                     ))}
 
                 </div>
@@ -127,7 +221,9 @@ function ChatWindow() {
             </footer>
 
         </div>
+
     );
+
 }
 
 export default ChatWindow;

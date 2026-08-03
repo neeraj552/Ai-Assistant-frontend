@@ -1,8 +1,14 @@
 import { useState } from "react";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
-import { login, register } from "../services/authService";
+import { register } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import AuthLayout from "../auth/AuthLayout";
+import AuthCard from "../auth/AuthCard";
+import AuthHeader from "../auth/AuthHeader";
+import { motion } from "framer-motion";
+import { fadeUp, staggerContainer } from "../animations/variants";
+import toast from "react-hot-toast";
 
 function Register(){
     
@@ -20,52 +26,76 @@ function Register(){
         try{
             await register(registerRequest);
 
-            alert("Registration Sucessfull")
+            toast.success("Account created successfully");
 
             navigate("/login");
         } catch (error) {
             console.error(error);
-            alert("Registration Failed");
+            toast.error("registration failed");
         }
     } 
 
     return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-            <div className="bg-white p-8 rounded-xl shadow-md w-96">
-                <h1 className="text-3xl font-bold mb-6 text-center">
-                    Register
-                </h1>
-                <div className="mb-4">
+       <AuthLayout> 
+    
+        <AuthCard>
+            
+            <motion.div
+            variants={staggerContainer}
+            initial = "hidden"
+            animate = "visible"
+            >
+
+           
+               <AuthHeader
+               title="Create Account"
+               subtitle="Start chatting with your document using AI."
+               />
+                <motion.div 
+                variants={fadeUp}
+                className="mb-4">
                     <Input
                     placeholder="Enter your name"
                     value={name}
                    onChange={(event) => setName(event.target.value)}
                     />
 
-                </div>
-                <div className="mb-4">
+                </motion.div>
+                <motion.div 
+                variants={fadeUp}
+                className="mb-4">
                     <Input
                         placeholder="Enter your email"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                     />
-                </div>
+                </motion.div>
 
-                <div className="mb-4">
+                <motion.div 
+                variants={fadeUp}
+                className="mb-4">
                     <Input
                         type="password"
                         placeholder="Enter your password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
-                </div>
+                </motion.div>
 
-                <Button  onClick={handleRegister}
+                <motion.div
+                variants={fadeUp}
+                className="mt-6"
+                >
+                <Button className=" w-full"
+                 onClick={handleRegister}
                 >
                     Register
                 </Button>
-            </div>
-        </div>
+                </motion.div>
+
+             </motion.div>
+            </AuthCard>
+        </AuthLayout>
     );
 }
 
