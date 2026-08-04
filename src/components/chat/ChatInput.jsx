@@ -1,67 +1,65 @@
 import { useState } from "react";
 import { SendHorizontal } from "lucide-react";
-import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 function ChatInput({ onSend }) {
 
-    const [message, setMessage] = useState("");
+    const [question, setQuestion] = useState("");
 
-    function handleSend() {
+    function handleSubmit() {
 
-        if (!message.trim()) return;
-
-        onSend(message);
-
-        setMessage("");
-
-    }
-
-    function handleKeyDown(event) {
-
-        if (event.key === "Enter") {
-
-            handleSend();
-
+        if (!question.trim()) {
+            return;
         }
+
+        onSend(question);
+
+        setQuestion("");
 
     }
 
     return (
 
-        <div className="relative">
+        <div className="mt-6 flex gap-4">
 
-            <Input
-                placeholder="Ask anything about this document..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="pr-14"
+            <input
+                value={question}
+                onChange={(event) =>
+                    setQuestion(event.target.value)
+                }
+                onKeyDown={(event) => {
+
+                    if (event.key === "Enter") {
+                        handleSubmit();
+                    }
+
+                }}
+                className="
+                    flex-1
+                    rounded-2xl
+                    border
+                    border-slate-800
+                    bg-slate-900/70
+                    px-6
+                    py-4
+                    text-white
+                    placeholder:text-slate-500
+                    focus:border-blue-500
+                    focus:outline-none
+                "
+                placeholder="Ask anything about your document..."
             />
 
-            <button
-                onClick={handleSend}
-                disabled={!message.trim()}
-                className="
-                    absolute
-                    right-3
-                    top-1/2
-                    -translate-y-1/2
-                    rounded-full
-                    bg-blue-600
-                    p-2
-                    text-white
-                    transition
-                    hover:bg-blue-700
-                    disabled:bg-gray-400
-                    disabled:cursor-not-allowed
-                "
+            <Button
+                onClick={handleSubmit}
             >
-                <SendHorizontal size={18}/>
-            </button>
+                <SendHorizontal size={20} />
+            </Button>
 
         </div>
 
     );
+
 }
 
 export default ChatInput;

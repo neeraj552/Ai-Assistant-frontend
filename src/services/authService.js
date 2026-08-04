@@ -10,3 +10,12 @@ export const register = async (RegisterRequest) => {
     return response.data;
 };
 
+export async function forgotPassword(request) {
+    await api.post("/auth/forgot-password", request);
+}
+
+export async function resetPassword(request) {
+
+    await api.post("/auth/reset-password", request);
+
+}

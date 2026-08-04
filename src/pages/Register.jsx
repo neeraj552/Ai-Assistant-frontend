@@ -16,6 +16,7 @@ function Register(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     async function handleRegister() {
         const registerRequest = {
             name,
@@ -32,6 +33,8 @@ function Register(){
         } catch (error) {
             console.error(error);
             toast.error("registration failed");
+        }finally{
+            setLoading(false);
         }
     } 
 
@@ -88,6 +91,8 @@ function Register(){
                 >
                 <Button className=" w-full"
                  onClick={handleRegister}
+                 loading={loading}
+                 loadingText="Creating account..."
                 >
                     Register
                 </Button>

@@ -1,81 +1,102 @@
 import { Bot, User } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { motion } from "framer-motion";
 
 function MessageBubble({
-    sender,
     message,
-    loading = false
+    isUser,
 }) {
 
-    const isUser = sender === "user";
-
     return (
-        <div
+
+        <motion.div
+            initial={{
+                opacity: 0,
+                y: 20,
+            }}
+            animate={{
+                opacity: 1,
+                y: 0,
+            }}
             className={`flex mb-6 ${
-                isUser ? "justify-end" : "justify-start"
+                isUser
+                    ? "justify-end"
+                    : "justify-start"
             }`}
         >
+
             <div
-                className={`flex items-end gap-3 max-w-3xl ${
-                    isUser ? "flex-row-reverse" : ""
-                }`}
-            >
-                {/* Avatar */}
-                <div
-                    className={`p-2 rounded-full ${
+                className={`
+                    flex
+                    max-w-3xl
+                    gap-4
+                    ${
                         isUser
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-200 text-gray-700"
-                    }`}
-                >
-                    {isUser ? (
-                        <User size={18} />
-                    ) : (
-                        <Bot size={18} />
-                    )}
-                </div>
+                            ? "flex-row-reverse"
+                            : ""
+                    }
+                `}
+            >
 
-                <div>
-                    <p className="text-xs text-gray-500 mb-1">
-                        {isUser ? "You" : "AI Assistant"}
-                    </p>
-
-                    <div
-                        className={`rounded-2xl px-5 py-3 shadow-sm ${
+                <div
+                    className={`
+                        flex
+                        h-12
+                        w-12
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-2xl
+                        ${
                             isUser
-                                ? "bg-blue-600 text-white"
-                                : "bg-white border text-gray-800"
-                        }`}
-                    >
-                        {loading ? (
-                            <div className="flex items-center gap-2 h-6">
+                                ? "bg-violet-500"
+                                : "bg-blue-500"
+                        }
+                    `}
+                >
 
-                                <span
-                                    className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
-                                />
+                    {isUser ? (
 
-                                <span
-                                    className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
-                                    style={{ animationDelay: "150ms" }}
-                                />
+                        <User
+                            size={22}
+                            className="text-white"
+                        />
 
-                                <span
-                                    className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
-                                    style={{ animationDelay: "300ms" }}
-                                />
+                    ) : (
 
-                            </div>
-                        ) : (
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {message}
-                            </ReactMarkdown>
-                        )}
-                    </div>
+                        <Bot
+                            size={22}
+                            className="text-white"
+                        />
+
+                    )}
+
                 </div>
+
+                <div
+                    className={`
+                        rounded-3xl
+                        px-6
+                        py-4
+                        leading-7
+                        shadow-lg
+                        ${
+                            isUser
+                                ? "bg-violet-600 text-white"
+                                : "border border-slate-800 bg-slate-900/80 text-slate-100"
+                        }
+                    `}
+                >
+
+                    {message}
+
+                </div>
+
             </div>
-        </div>
+
+        </motion.div>
+
     );
+
 }
 
 export default MessageBubble;

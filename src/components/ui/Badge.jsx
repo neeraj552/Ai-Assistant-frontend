@@ -1,20 +1,45 @@
 function Badge({
     children,
     variant = "primary",
-    className = ""
+    className = "",
 }) {
 
     const variants = {
 
-        primary: "bg-blue-100 text-blue-700",
+        primary: `
+            bg-blue-500/15
+            text-blue-400
+            border
+            border-blue-500/20
+        `,
 
-        secondary: "bg-gray-100 text-gray-700",
+        secondary: `
+            bg-slate-800
+            text-slate-300
+            border
+            border-slate-700
+        `,
 
-        success: "bg-green-100 text-green-700",
+        success: `
+            bg-emerald-500/15
+            text-emerald-400
+            border
+            border-emerald-500/20
+        `,
 
-        warning: "bg-yellow-100 text-yellow-700",
+        warning: `
+            bg-yellow-500/15
+            text-yellow-400
+            border
+            border-yellow-500/20
+        `,
 
-        danger: "bg-red-100 text-red-700"
+        danger: `
+            bg-red-500/15
+            text-red-400
+            border
+            border-red-500/20
+        `,
 
     };
 
@@ -24,12 +49,13 @@ function Badge({
             className={`
                 inline-flex
                 items-center
+                rounded-full
                 px-3
                 py-1
-                rounded-full
-                text-sm
-                font-medium
-                ${variants[variant] || variants.primary}
+                text-xs
+                font-semibold
+                backdrop-blur-sm
+                ${variants[variant] ?? variants.primary}
                 ${className}
             `}
         >
@@ -37,6 +63,7 @@ function Badge({
         </span>
 
     );
+
 }
 
 export default Badge;

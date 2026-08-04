@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 function Button({
   children,
@@ -6,6 +7,8 @@ function Button({
   type = "button",
   variant = "primary",
   disabled = false,
+  loading = false,
+  loadingText="Loading..",
   className = "",
 }) {
 
@@ -58,7 +61,19 @@ function Button({
       }}
       className={`${baseStyle} ${variants[variant]} ${className}`}
     >
-      {children}
+     {loading ? (
+        <>
+          <Loader2
+            size={18}
+            className="animate-spin"
+          />
+          <span className="ml-2">
+            {loadingText}
+          </span>
+        </>
+      ) : (
+        children
+      )}
     </motion.button>
   );
 }

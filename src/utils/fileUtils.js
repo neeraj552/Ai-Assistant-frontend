@@ -5,12 +5,11 @@
     };
 
 export const formatUploadDate = (dateString) => {
-
     return new Intl.DateTimeFormat("en-IN", {
-        dateStyle: "medium",
-        timeStyle: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
     }).format(new Date(dateString));
-
 };
 
 export const getStatusVariant = (status) => {

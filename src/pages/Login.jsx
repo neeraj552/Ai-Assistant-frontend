@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -33,6 +34,8 @@ function Login() {
         navigate("/dashboard");
        } catch (error) {
         toast.error("Invalid email or password.");
+    } finally{
+        setLoading(false);
     }
     }
 
@@ -71,6 +74,23 @@ function Login() {
                         onChange={(event) => setPassword(event.target.value)}
                     />
                 </motion.div>
+
+                <motion.div
+                       variants={fadeUp}
+                       className="mb-6 flex justify-end"
+                >
+                <button
+                       onClick={() => navigate("/forgot-password")}
+                       className="
+                       text-sm
+                       text-blue-400
+                       transition
+                       hover:text-blue-300
+                       "
+                >
+                Forgot Password?
+                </button>
+                </motion.div>
                
                <motion.div
                variants={fadeUp}
@@ -78,10 +98,35 @@ function Login() {
                >
                 <Button 
                 className="w-full"
-                onClick={handleLogin}>
+                onClick={handleLogin}
+                loading={loading}
+                loadingText="Logging in..."
+                >
                 Login
                 </Button>
                </motion.div>
+
+               <motion.div
+                variants={fadeUp}
+                className="mt-6 text-center"
+               >
+               <p className="text-sm text-slate-400">
+
+                Don't have an account?{" "}
+
+               <button
+                  onClick={() => navigate("/register")}
+                  className="
+                  font-medium
+                  text-blue-400
+                  hover:text-blue-300
+                  "
+               >
+                 Register
+              </button>
+
+              </p>
+            </motion.div>
             </motion.div>
             </AuthCard>
         </AuthLayout>

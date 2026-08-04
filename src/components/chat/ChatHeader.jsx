@@ -1,48 +1,72 @@
-import { ArrowLeft, Trash2, FileText } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
 
-function ChatHeader({ fileName, onDeleteChat }) {
+function ChatHeader({ fileName }) {
+
     const navigate = useNavigate();
 
     return (
-        <div className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-sm">
+
+        <div
+            className="
+                mb-6
+                flex
+                items-center
+                justify-between
+                rounded-3xl
+                border
+                border-slate-800
+                bg-slate-900/70
+                backdrop-blur-xl
+                p-6
+            "
+        >
 
             <div className="flex items-center gap-4">
 
-                <button
+                <Button
+                    variant="secondary"
                     onClick={() => navigate("/dashboard")}
-                    className="rounded-lg p-2 hover:bg-gray-100 transition"
                 >
-                    <ArrowLeft size={22} />
-                </button>
+                    <ArrowLeft size={18} />
+                </Button>
 
-                <div className="flex items-center gap-3">
-                    <FileText className="text-red-500" size={24} />
+                <div
+                    className="
+                        flex
+                        h-14
+                        w-14
+                        items-center
+                        justify-center
+                        rounded-2xl
+                        bg-blue-500/10
+                    "
+                >
+                    <FileText
+                        size={28}
+                        className="text-blue-400"
+                    />
+                </div>
 
-                    <div>
-                        <h2 className="font-semibold text-lg">
-                            {fileName}
-                        </h2>
+                <div>
 
-                        <p className="text-sm text-gray-500">
-                            AI Document Assistant
-                        </p>
-                    </div>
+                    <h2 className="text-xl font-bold text-white">
+                        {fileName}
+                    </h2>
+
+                    <p className="text-slate-400">
+                        AI Document Assistant
+                    </p>
+
                 </div>
 
             </div>
 
-            <Button 
-            variant="danger"
-            onClick={onDeleteChat}
-            >
-                <Trash2 size={18} />
-                Delete Chat
-            </Button>
-
         </div>
+
     );
+
 }
 
 export default ChatHeader;
