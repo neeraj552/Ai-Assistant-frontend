@@ -25,3 +25,16 @@ export const downloadFile = async (id) => {
         responseType: "blob",
     });
 };
+
+export async function searchFiles(keyword){
+    const response = await api.get(
+        `/files/search?keyword=${encodeURIComponent(keyword)}`
+    );
+
+    return response.data;
+}
+
+export async function sortFiles(by) {
+    const response = await api.get(`/files/sort?by=${by}`);
+    return response.data;
+}

@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import { staggerContainer } from "../animations/variants";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import PasswordStrength from "../auth/PasswordStrength";
+
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -73,7 +75,11 @@ function Login() {
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
+                    <PasswordStrength
+                       password={password}
+                    />
                 </motion.div>
+
 
                 <motion.div
                        variants={fadeUp}

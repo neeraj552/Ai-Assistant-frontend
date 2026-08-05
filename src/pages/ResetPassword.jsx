@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import Button from "../components/ui/Button";
 
 import { fadeUp, staggerContainer } from "../animations/variants";
 import { resetPassword } from "../services/authService";
+import PasswordStrength from "../auth/PasswordStrength";
 
 function ResetPassword() {
 
@@ -27,6 +28,26 @@ function ResetPassword() {
 
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [countdown, setCountdown] = useState(3);
+
+    useEffect(() => {
+
+        if (!success) return;
+
+        if (countdown === 0) {
+            navigate("/login");
+            return;
+        }
+
+        const timer = setTimeout(() => {
+
+            setCountdown((previous) => previous - 1);
+
+        }, 1000);
+
+        return () => clearTimeout(timer);
+
+    }, [success, countdown, navigate]);
 
     async function handleResetPassword() {
 
@@ -109,6 +130,10 @@ function ResetPassword() {
                                     }
                                 />
 
+                                <PasswordStrength
+                                password={password}
+                                />
+
                             </motion.div>
 
                             <motion.div
@@ -127,7 +152,9 @@ function ResetPassword() {
 
                             </motion.div>
 
-                            <motion.div variants={fadeUp}>
+                            <motion.div
+                                variants={fadeUp}
+                            >
 
                                 <Button
                                     className="w-full"
@@ -189,12 +216,33 @@ function ResetPassword() {
                                 Your password has been successfully reset.
                             </p>
 
-                            <Button
-                                className="mt-8 w-full"
-                                onClick={() => navigate("/login")}
+                            <div
+                                className="
+                                    mt-8
+                                    rounded-2xl
+                                    border
+                                    border-green-500/20
+                                    bg-green-500/10
+                                    p-5
+                                "
                             >
-                                Back to Login
-                            </Button>
+
+                                <p className="text-green-300">
+                                    Redirecting to Login in
+                                </p>
+
+                                <h1
+                                    className="
+                                        mt-2
+                                        text-5xl
+                                        font-bold
+                                        text-white
+                                    "
+                                >
+                                    {countdown}
+                                </h1>
+
+                            </div>
 
                         </motion.div>
 

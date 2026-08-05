@@ -12,6 +12,8 @@ import {
     getFiles,
     downloadFile,
     deleteFile,
+    searchFiles,
+    sortFiles,
 } from "../../services/fileService";
 
 import {
@@ -22,8 +24,9 @@ import {
 import SummaryModal from "../summary/SummaryModal";
 import SummarySkeleton from "../summary/SummarySkeleton";
 import SummaryContent from "../summary/SummaryContent"; 
+import Input from "../ui/Input";
 
-function DocumentManager() {
+function DocumentManager({ onDocumentUploaded }) {
 
     const fileInputRef = useRef(null);
 
@@ -34,6 +37,14 @@ function DocumentManager() {
     const [summaryLoading, setSummaryLoading] = useState(false);
     const [selectedSummary, setSelectedSummary] = useState(null);
     const [selectedSummaryFile, setSelectedSummaryFile] = useState(null);
+    const [search, setSearch] = useState("");
+    const [sortBy, setSortBy] = useState("NEWEST");
+
+    useEffect(() => {
+
+    handleSort();
+
+    }, [sortBy]);
 
     useEffect(() => {
         loadFiles();
@@ -46,6 +57,27 @@ function DocumentManager() {
         } catch (error) {
             console.error(error);
             toast.error("Failed to load documents.");
+        }
+    }
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if(search.trim() === ""){
+                loadFiles();
+            } else {
+                handleSearch();
+            }
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    async function handleSearch(){
+        try{
+            const response = await searchFiles(search);
+            setFiles(response);
+        } catch (error){
+            console.error(error);
+            toast.error("Search failed.");
         }
     }
 
@@ -65,6 +97,10 @@ function DocumentManager() {
             toast.success("Uploaded successfully");
 
             await loadFiles();
+
+            if (onDocumentUploaded) {
+            await onDocumentUploaded();
+}
 
             setSelectedFile(null);
 
@@ -125,6 +161,10 @@ function DocumentManager() {
                 previousFiles.filter((file) => file.id !== id)
             );
 
+            if (onDocumentUploaded) {
+            await onDocumentUploaded();
+            }
+
             toast.success("Deleted successfully");
 
         } catch (error) {
@@ -161,8 +201,16 @@ function DocumentManager() {
     function handleChat(file) {
         console.log(file);
 
-        // Later:
-        // navigate(`/chat/${file.id}`);
+    }
+
+    async function handleSort(){
+        try {
+            const response = await sortFiles(sortBy);
+            setFiles(response);
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to sort documents.")
+        }
     }
 
     return (
@@ -191,6 +239,43 @@ function DocumentManager() {
                 />
 
             )}
+
+           <div className="mb-6 flex gap-4">
+
+           <div className="flex-1">
+
+            <Input
+            placeholder="🔍 Search documents..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            />
+
+            </div>
+
+           <select
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
+              className="
+            rounded-xl
+            border
+            border-slate-700
+            bg-slate-800
+            px-4
+            text-white
+            outline-none
+           "
+           >
+
+        <option value="NEWEST">Newest</option>
+        <option value="OLDEST">Oldest</option>
+        <option value="NAME_ASC">Name (A-Z)</option>
+        <option value="NAME_DESC">Name (Z-A)</option>
+        <option value="SIZE_ASC">Smallest</option>
+        <option value="SIZE_DESC">Largest</option>
+
+           </select>
+
+            </div>
 
             {files.length === 0 ? (
 
