@@ -5,7 +5,10 @@ import {
     Trash2,
     MessageSquare,
     Sparkles,
+    Eye,
 } from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
 
 import Button from "../ui/Button";
 import Badge from "../ui/Badge";
@@ -16,17 +19,19 @@ import {
     formatStatus,
     getStatusVariant,
 } from "../../utils/fileUtils";
-import { useNavigate } from "react-router-dom";
 
 function DocumentCard({
     file,
     onDownload,
     onDelete,
-    onChat,
     onSummary,
+    onPreview,
 }) {
+
     const navigate = useNavigate();
+
     return (
+
         <motion.div
             whileHover={{
                 y: -6,
@@ -48,6 +53,7 @@ function DocumentCard({
                 hover:shadow-blue-500/10
             "
         >
+
             {/* Header */}
 
             <div className="flex items-start justify-between gap-4">
@@ -107,54 +113,79 @@ function DocumentCard({
             <div className="my-6 border-t border-slate-800" />
 
             {/* Actions */}
+
             <div className="space-y-3">
-            <div className="flex gap-3">
 
-                <Button
-                className="flex-1 gap-2"
-                    onClick={() =>
-                    navigate(`/chat/${file.id}`, {
-                    state: {
-                    fileName: file.originalName,
-                 }, 
-                })
-                }
-                >
-                    <MessageSquare size={18} />
-                    Chat
-                </Button>
+                {/* Chat + Summary */}
 
-                 <Button
-                   variant="secondary"
-                   className="flex-1 gap-2"
-                   onClick={() => onSummary(file)}
-                >
-                   <Sparkles size={18} />
-                   Summary
-                </Button>
-            </div>
-            <div className="flex gap-3">
-                <Button
-                    variant="secondary"
-                    className="flex-1 gap-3"
-                    onClick={() => onDownload(file)}
-                >
-                    <Download size={18} />
-                </Button>
+                <div className="flex gap-3">
+
+                    <Button
+                        className="flex-1 gap-2"
+                        onClick={() =>
+                            navigate(`/chat/${file.id}`, {
+                                state: {
+                                    fileName: file.originalName,
+                                },
+                            })
+                        }
+                    >
+                        <MessageSquare size={18} />
+                        Chat
+                    </Button>
+
+                    <Button
+                        variant="secondary"
+                        className="flex-1 gap-2"
+                        onClick={() => onSummary(file)}
+                    >
+                        <Sparkles size={18} />
+                        Summary
+                    </Button>
+
+                </div>
+
+                {/* Preview + Download */}
+
+                <div className="flex gap-3">
+
+                    <Button
+                        variant="secondary"
+                        className="flex-1 gap-2"
+                        onClick={() => onPreview(file)}
+                    >
+                        <Eye size={18} />
+                        Preview
+                    </Button>
+
+                    <Button
+                        variant="secondary"
+                        className="flex-1 gap-2"
+                        onClick={() => onDownload(file)}
+                    >
+                        <Download size={18} />
+                        Download
+                    </Button>
+
+                </div>
+
+                {/* Delete */}
 
                 <Button
                     variant="danger"
-                    className="flex-1 gap-2"
+                    className="w-full gap-2"
                     onClick={() => onDelete(file.id)}
                 >
                     <Trash2 size={18} />
+                    Delete
                 </Button>
 
             </div>
-        </div>
 
         </motion.div>
+
     );
+
 }
 
 export default DocumentCard;

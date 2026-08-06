@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -8,6 +8,8 @@ import ChatMessages from "../components/chat/ChatMessages";
 import ChatInput from "../components/chat/ChatInput";
 import MessageBubble from "../components/chat/MessageBubble";
 import TypingIndicator from "../components/chat/TypingIndicator";
+import PromptSelector from "../components/chat/PromptSelector";
+import PromptSuggestions from "../components/chat/PromptSuggestions";
 
 import {
     getChatHistory,
@@ -24,6 +26,9 @@ function Chat() {
 
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [promptType, setPromptType] = useState("CHAT");
+    const [showSuggestions, setShowSuggestions] = useState(true);
+
     const bottomRef = useRef(null);
 
     useEffect(() => {
@@ -77,10 +82,12 @@ function Chat() {
     }
 
     useEffect(() => {
+
         bottomRef.current?.scrollIntoView({
-            behaviour: "smooth",
+            behavior: "smooth",
         });
-    }, [messages, loading])
+
+    }, [messages, loading]);
 
     async function handleSend(question) {
 
@@ -99,7 +106,11 @@ function Chat() {
 
         try {
 
-            const response = await askQuestion(fileId, question);
+            const response = await askQuestion(
+                fileId,
+                question,
+                promptType
+            );
 
             setMessages((previous) => [
 
@@ -126,6 +137,26 @@ function Chat() {
 
     }
 
+    async function handleSuggestion(text) {
+
+        setShowSuggestions(false);
+
+        await handleSend(text);
+
+    }
+
+    function handlePromptChange(type) {
+
+        setPromptType(type);
+
+        setShowSuggestions(true);
+
+    }
+
+    const hasConversation = messages.some(
+        (message) => message.id !== "welcome"
+    );
+
     return (
 
         <ChatLayout>
@@ -148,12 +179,34 @@ function Chat() {
 
                 {loading && (
 
-                    <TypingIndicator/>
+                    <TypingIndicator />
 
                 )}
+
                 <div ref={bottomRef} />
 
             </ChatMessages>
+
+            <div className="mt-6">
+
+                <PromptSelector
+                    promptType={promptType}
+                    onChange={handlePromptChange}
+                    onToggle={() =>
+                        setShowSuggestions((previous) => !previous)
+                    }
+                />
+
+                { showSuggestions && (
+
+                    <PromptSuggestions
+                        promptType={promptType}
+                        onSelect={handleSuggestion}
+                    />
+
+                )}
+
+            </div>
 
             <ChatInput
                 onSend={handleSend}

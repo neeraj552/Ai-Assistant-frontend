@@ -7,11 +7,15 @@ export async function getChatHistory(fileId) {
     return response.data;
 }
 
-export async function askQuestion(fileId, question) {
+export async function askQuestion(fileId, question, promptType = "CHAT") {
 
-    const response = await api.post(`/chat/${fileId}`, {
-        question
-    });
+    const response = await api.post(
+        `/chat/${fileId}`,
+        {
+            question,
+            promptType,
+        }
+    );
 
     return response.data;
 }

@@ -1,5 +1,7 @@
 import { Bot, User } from "lucide-react";
 import { motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function MessageBubble({
     message,
@@ -37,6 +39,8 @@ function MessageBubble({
                 `}
             >
 
+                {/* Avatar */}
+
                 <div
                     className={`
                         flex
@@ -72,6 +76,8 @@ function MessageBubble({
 
                 </div>
 
+                {/* Message */}
+
                 <div
                     className={`
                         rounded-3xl
@@ -87,7 +93,70 @@ function MessageBubble({
                     `}
                 >
 
-                    {message}
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+
+                            h1: ({ children }) => (
+                                <h1 className="mb-4 text-2xl font-bold">
+                                    {children}
+                                </h1>
+                            ),
+
+                            h2: ({ children }) => (
+                                <h2 className="mb-3 mt-6 text-xl font-semibold">
+                                    {children}
+                                </h2>
+                            ),
+
+                            h3: ({ children }) => (
+                                <h3 className="mb-2 mt-4 text-lg font-semibold">
+                                    {children}
+                                </h3>
+                            ),
+
+                            p: ({ children }) => (
+                                <p className="mb-3 leading-7">
+                                    {children}
+                                </p>
+                            ),
+
+                            ul: ({ children }) => (
+                                <ul className="mb-4 list-disc pl-6">
+                                    {children}
+                                </ul>
+                            ),
+
+                            ol: ({ children }) => (
+                                <ol className="mb-4 list-decimal pl-6">
+                                    {children}
+                                </ol>
+                            ),
+
+                            li: ({ children }) => (
+                                <li className="mb-2">
+                                    {children}
+                                </li>
+                            ),
+
+                            strong: ({ children }) => (
+                                <strong className="font-bold text-white">
+                                    {children}
+                                </strong>
+                            ),
+
+                            code: ({ children }) => (
+                                <code className="rounded bg-slate-800 px-2 py-1 text-blue-300">
+                                    {children}
+                                </code>
+                            ),
+
+                        }}
+                    >
+
+                        {message}
+
+                    </ReactMarkdown>
 
                 </div>
 

@@ -1,14 +1,18 @@
 import api from "../api/axios"
 
-export const uploadFile = async (file) => {
+export async function uploadFile(file) {
+
     const formData = new FormData();
 
     formData.append("file", file);
 
-    const response = await api.post("/files/upload", formData);
+    const response = await api.post(
+        "/files/upload",
+        formData
+    );
 
     return response.data;
-};
+}
 
 export const getFiles = async () => {
 
@@ -36,5 +40,13 @@ export async function searchFiles(keyword){
 
 export async function sortFiles(by) {
     const response = await api.get(`/files/sort?by=${by}`);
+    return response.data;
+}
+
+export async function previewFile(id) {
+    const response = await api.get(`/files/preview/${id}`, {
+        responseType: "blob",
+    });
+
     return response.data;
 }

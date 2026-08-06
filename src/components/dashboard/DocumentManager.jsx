@@ -14,6 +14,7 @@ import {
     deleteFile,
     searchFiles,
     sortFiles,
+
 } from "../../services/fileService";
 
 import {
@@ -25,6 +26,9 @@ import SummaryModal from "../summary/SummaryModal";
 import SummarySkeleton from "../summary/SummarySkeleton";
 import SummaryContent from "../summary/SummaryContent"; 
 import Input from "../ui/Input";
+import { progress } from "framer-motion";
+import PdfPreviewModal from "../pdf/PdfPreviewModal";
+import { pre } from "framer-motion/m";
 
 function DocumentManager({ onDocumentUploaded }) {
 
@@ -39,6 +43,10 @@ function DocumentManager({ onDocumentUploaded }) {
     const [selectedSummaryFile, setSelectedSummaryFile] = useState(null);
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("NEWEST");
+    const [uploadProgress, setUploadProgress] = useState(0);
+
+    const[previewOpen, setPreviewOpen] = useState(false);
+    const[previewFile, setPreviewFile] = useState(true);
 
     useEffect(() => {
 
@@ -92,7 +100,16 @@ function DocumentManager({ onDocumentUploaded }) {
 
             setUploading(true);
 
-            await uploadFile(selectedFile);
+            setUploadProgress(0);
+
+            await uploadFile(
+                selectedFile,
+                (progress) => {
+                    setUploadProgress(progress);
+                }
+            );
+
+            setUploadProgress(100);
 
             toast.success("Uploaded successfully");
 
@@ -116,6 +133,9 @@ function DocumentManager({ onDocumentUploaded }) {
         } finally {
 
             setUploading(false);
+            setTimeout(() => {
+                setUploadProgress(0);
+            }, 500);
 
         }
 
@@ -213,6 +233,11 @@ function DocumentManager({ onDocumentUploaded }) {
         }
     }
 
+    async function handlePreview(file){
+        setPreviewFile(file);
+        setPreviewOpen(true);
+    }
+
     return (
 
         <div className="space-y-8">
@@ -235,6 +260,7 @@ function DocumentManager({ onDocumentUploaded }) {
                 <SelectedFileCard
                     file={selectedFile}
                     uploading={uploading}
+                    uploadProgress={uploadProgress}
                     onUpload={handleUpload}
                 />
 
@@ -301,6 +327,7 @@ function DocumentManager({ onDocumentUploaded }) {
                             onDelete={handleDelete}
                             onChat={handleChat}
                             onSummary={handleSummary}
+                            onPreview={handlePreview}
                         />
 
                     ))}
@@ -326,7 +353,17 @@ function DocumentManager({ onDocumentUploaded }) {
 
             </SummaryModal>
 
+            <PdfPreviewModal
+            open={previewOpen}
+            fileId={previewFile?.id}
+            fileName={previewFile?.originalName}
+            onClose={() => setPreviewOpen(false)}
+        
+           />
+
         </div>
+
+        
 
     );
 

@@ -1,65 +1,132 @@
-import { UploadCloud } from "lucide-react"
-import { motion } from "framer-motion"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { UploadCloud } from "lucide-react";
+
 function UploadCard({
-    selectedFile,
     onSelect,
-    onUpload,
-    uploading,
-    inputRef
-}){
+    inputRef,
+}) {
+
+    const [dragActive, setDragActive] = useState(false);
+
+    function handleDragOver(event) {
+        event.preventDefault();
+        setDragActive(true);
+    }
+
+    function handleDragEnter(event) {
+        event.preventDefault();
+        setDragActive(true);
+    }
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+        setDragActive(false);
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+
+        setDragActive(false);
+
+        const file = event.dataTransfer.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        onSelect({
+            target: {
+                files: [file],
+            },
+        });
+    }
 
     return (
 
         <motion.div
-        whileHover={{
-            scale:1.01,
-        }}
-        className="
-            mb-10
-            rounded-3xl
-            border-2
-            border-dashed
-            border-slate-900/70
-            backdrop-blur-xl
-            p-12
-            text-center
-            transition-all
-            hover:border-blue-500
-            hover:shadow-2xl
-            hover:shadow-blue-500/10
-            cursor-pointer
-        "
-        onClick={()=> inputRef.current.click()}
+            whileHover={{
+                scale: 1.01,
+            }}
+            animate={{
+                scale: dragActive ? 1.02 : 1,
+            }}
+            transition={{
+                duration: 0.2,
+            }}
+            className={`
+                mb-10
+                rounded-3xl
+                border-2
+                border-dashed
+                backdrop-blur-xl
+                p-12
+                text-center
+                cursor-pointer
+                transition-all
+                duration-300
+                ${
+                    dragActive
+                        ? "border-blue-500 bg-blue-500/10 shadow-2xl shadow-blue-500/20"
+                        : "border-slate-700 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10"
+                }
+            `}
+            onClick={() => inputRef.current.click()}
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
         >
-        <UploadCloud
-        size={60}
-        className="mx-auto text-blue-400"
-        />
 
-        <h2 className="mt-6 text-2xl font-bold">
+            <motion.div
+                animate={{
+                    y: dragActive ? -8 : 0,
+                    scale: dragActive ? 1.15 : 1,
+                }}
+                transition={{
+                    duration: 0.2,
+                }}
+            >
 
-            Drag & Drop your PDF 
+                <UploadCloud
+                    size={64}
+                    className="mx-auto text-blue-400"
+                />
 
-        </h2>
+            </motion.div>
 
-        <p className="mt-3 text-slate-400">
-        or click here to browse your computer    
-        </p>
+            <h2 className="mt-6 text-2xl font-bold">
 
-        <p className="mt-2 text-sm text-slate-500">
-           PDF only • Max 10 MB 
-        </p>
+                {dragActive
+                    ? "Release to Upload"
+                    : "Drag & Drop your PDF"}
 
-        <input
-        ref={inputRef}
-        type="file"
-        accept=".pdf"
-        className="hidden"
-        onChange={onSelect}
-        />   
+            </h2>
+
+            <p className="mt-3 text-slate-400">
+
+                {dragActive
+                    ? "Drop your PDF anywhere inside this area."
+                    : "or click here to browse your computer"}
+
+            </p>
+
+            <p className="mt-2 text-sm text-slate-500">
+                PDF only • Max 10 MB
+            </p>
+
+            <input
+                ref={inputRef}
+                type="file"
+                accept=".pdf"
+                className="hidden"
+                onChange={onSelect}
+            />
 
         </motion.div>
-    )
+
+    );
 
 }
+
 export default UploadCard;
